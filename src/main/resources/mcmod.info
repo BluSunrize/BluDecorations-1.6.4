@@ -1,0 +1,16 @@
+[
+{
+  "modid": "bludecorations",
+  "name": "BluDecorations",
+  "description": "Fully customizeable decorations!",
+  "version": "1.2.1",
+  "mcversion": "1.6.4",
+  "url": "",
+  "updateUrl": "",
+  "authors": ["BluSunrize"],
+  "credits": "'The Skype Guys' for inspiration and criticism",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
