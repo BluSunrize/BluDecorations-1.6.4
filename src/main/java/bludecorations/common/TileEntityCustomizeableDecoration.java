@@ -9,14 +9,15 @@ import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import bludecorations.api.ParticleElement;
 import bludecorations.api.RenderElement;
 
 public class TileEntityCustomizeableDecoration extends TileEntity implements IInventory
 {
 	ItemStack[] inv = new ItemStack[27];
-	boolean hasInv = false;
-
+	boolean hasInv;
+	
 	double yRotation;
 	double scale = 1;
 	float xMin = 0.5f;
@@ -28,10 +29,8 @@ public class TileEntityCustomizeableDecoration extends TileEntity implements IIn
 	int lightValue = 0;
 	RenderElement[] renderElements = {};
 	ParticleElement[] particleElements = {};
-//	= {
-//			//new RenderElement("ionicTorch").setModel("/assets/bludecorations/models/BluDecorations.obj").setTexture("bludecorations:textures/models/ZeldaTorch.png").setPart("Torch_07").setTranslation(new double[]{0.5,0,0.5}).update(),
-//			new RenderElement("ionicTorch").setModel("/assets/bludecorations/models/BluDecorations.obj").setTexture("bludecorations:textures/models/ZeldaTorch.png").setPart("Torch_07").setTranslation(new double[]{0.5,0,0.5}).update()
-//	};
+	
+	boolean infiniteRenderSize;
 
 
 	public RenderElement[] getRenderElements()
@@ -322,4 +321,12 @@ public class TileEntityCustomizeableDecoration extends TileEntity implements IIn
 		return true;
 	}
 
+	@Override
+	public AxisAlignedBB getRenderBoundingBox()
+	{
+		if(this.infiniteRenderSize)
+			return INFINITE_EXTENT_AABB;
+		else
+			return super.getRenderBoundingBox();
+	}
 }

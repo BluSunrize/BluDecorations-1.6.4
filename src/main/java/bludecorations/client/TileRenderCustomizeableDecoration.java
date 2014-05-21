@@ -2,6 +2,7 @@ package bludecorations.client;
 
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.client.model.IModelCustom;
 
 import org.lwjgl.opengl.GL11;
 
@@ -28,9 +29,9 @@ public class TileRenderCustomizeableDecoration extends TileEntitySpecialRenderer
 			{
 				try
 				{
-//					if(!GraphicUtilities.isModelPathValid(element.getModel())
-//						/*||*/if(	!GraphicUtilities.isTexturePathValid(element.getTexture()) )
-//						break;
+					//					if(!GraphicUtilities.isModelPathValid(element.getModel())
+					//						/*||*/if(	!GraphicUtilities.isTexturePathValid(element.getTexture()) )
+					//						break;
 					GL11.glPushMatrix();
 
 					GraphicUtilities.bindTexture(element.getTexture());
@@ -40,7 +41,7 @@ public class TileRenderCustomizeableDecoration extends TileEntitySpecialRenderer
 					GL11.glTranslated(-0.5,-0.5,-0.5);
 					GL11.glTranslated(element.getTranslation()[0], element.getTranslation()[1], element.getTranslation()[2]);
 
-					
+
 					if(element.getRotation()[2] != 0)
 						GL11.glRotated(element.getRotation()[2], 0, 0, 1);
 					if(element.getRotation()[1] != 0)
@@ -49,14 +50,18 @@ public class TileRenderCustomizeableDecoration extends TileEntitySpecialRenderer
 						GL11.glRotated(element.getRotation()[0], 1, 0, 0);
 
 					GL11.glScaled(tile.getScale(),tile.getScale(),tile.getScale());
-					GraphicUtilities.bindModel(element.getModel()).renderPart(element.getPart());
-
+					if(GraphicUtilities.isModelPathValid(element.getModel()))
+					{
+						IModelCustom tempMod = GraphicUtilities.bindModel(element.getModel());
+						if(tempMod != null && GraphicUtilities.isModelPartValid(tempMod, element.getPart()))
+							tempMod.renderPart(element.getPart());
+					}
 					GL11.glPopMatrix();
 				}
 				catch(Exception except)
 				{
 					//except.printStackTrace();
-					GL11.glPushMatrix();
+					GL11.glPopMatrix();
 				}
 			}
 		}

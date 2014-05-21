@@ -27,6 +27,7 @@ public class ItemTool extends Item
 	Icon iconSpray;
 	Icon iconInstr0;
 	Icon iconInstr1;
+	Icon infinityBinocs;
 	public ItemTool(int id)
 	{
 		super(id);
@@ -40,6 +41,7 @@ public class ItemTool extends Item
 		itemList.add(new ItemStack(id,1,0));
 		itemList.add(new ItemStack(id,1,1));
 		itemList.add(new ItemStack(id,1,2));
+		itemList.add(new ItemStack(id,1,3));
 	}
 
 	@Override
@@ -49,6 +51,8 @@ public class ItemTool extends Item
 		iconSpray = ir.registerIcon("bludecorations:spraycan");
 		iconInstr0 = ir.registerIcon("bludecorations:instructions0");
 		iconInstr1 = ir.registerIcon("bludecorations:instructions1");
+		iconInstr1 = ir.registerIcon("bludecorations:instructions1");
+		infinityBinocs = ir.registerIcon("bludecorations:binoculars");
 	}
 	@Override
 	public Icon getIconIndex(ItemStack stack)
@@ -61,6 +65,8 @@ public class ItemTool extends Item
 			return iconSpray;
 		case 2:
 			return stack.hasTagCompound() && stack.getTagCompound().hasKey("copiedDecoration") ? iconInstr1 : iconInstr0;
+		case 3:
+			return infinityBinocs;
 		}
 		return iconWrench;
 	}
@@ -121,10 +127,20 @@ public class ItemTool extends Item
 					list.add(StatCollector.translateToLocal("gui.text.copyInstructions0"));
 					list.add(StatCollector.translateToLocal("gui.text.copyInstructions1"));
 					list.add(StatCollector.translateToLocal("gui.text.copyInstructions2"));
+					list.add(StatCollector.translateToLocal("gui.text.copyInstructions3"));
+					list.add(StatCollector.translateToLocal("gui.text.copyInstructions4"));
 				}
 			}
 			else
 				stack.setTagCompound(new NBTTagCompound());
+		}
+		if(stack.getItemDamage() == 3)
+		{
+			list.add(StatCollector.translateToLocal("gui.text.makeRenderInfinite0"));
+			list.add(StatCollector.translateToLocal("gui.text.makeRenderInfinite1"));
+			list.add(StatCollector.translateToLocal("gui.text.makeRenderInfinite2"));
+			list.add(StatCollector.translateToLocal("gui.text.makeRenderInfinite3"));
+			list.add(StatCollector.translateToLocal("gui.text.makeRenderInfinite4"));
 		}
 	}
 

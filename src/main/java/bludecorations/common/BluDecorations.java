@@ -56,6 +56,9 @@ public class BluDecorations {
 		ItemTool = new ItemTool(ItemToolID).setUnlocalizedName("BluDec_Tool");
 		GameRegistry.registerItem(ItemTool, ItemTool.getUnlocalizedName());
 		ItemTool.setCreativeTab(CreativeTabs.tabTools);
+
+		registerPresets();
+		proxy.grabPresetConfig(event);
 	}
 
 	@Mod.EventHandler
@@ -64,12 +67,22 @@ public class BluDecorations {
 		GameRegistry.registerTileEntity(TileEntityCustomizeableDecoration.class, "TileEntityCustomizeableDecoration");
 		proxy.registerRenders();
 		NetworkRegistry.instance().registerGuiHandler(instance, proxy);
-		
+
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(BlockDecoration,8), "dgd","psp","dgd", 'd',new ItemStack(Item.dyePowder,1,OreDictionary.WILDCARD_VALUE), 'g',new ItemStack(Item.glowstone), 'p',new ItemStack(Block.thinGlass), 's',"stone"));
 		GameRegistry.addShapedRecipe(new ItemStack(ItemTool), "ii "," b "," ii", 'i',Item.ingotIron, 'b',BlockDecoration);
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ItemTool,1,1), " f ","dbd","iii", 'i',Item.ingotIron, 'b',BlockDecoration, 'd',"dyeBlue", 'f',Item.fireworkCharge));
 		GameRegistry.addShapedRecipe(new ItemStack(ItemTool,1,2), " b ","ppp", 'b',BlockDecoration, 'p',Item.paper);
+		GameRegistry.addShapedRecipe(new ItemStack(ItemTool,1,3), " ii","gbg"," ii", 'i',Item.ingotIron, 'b',BlockDecoration, 'g',new ItemStack(Block.thinGlass));
+	}
 
+	@Mod.EventHandler
+	public static void postInit(FMLPostInitializationEvent event)
+	{
+
+	}
+
+	private void registerPresets()
+	{
 		BluDecorationsApi.addPresetModel("Simple Cube", new RenderElement().setModel("/assets/bludecorations/models/BluDecorations.obj").setTexture("textures/blocks/stone.png").setPart("Cube_00").setTranslation(0.5,0,0.5).update());
 		BluDecorationsApi.addPresetModel("Stone Torch", new RenderElement().setModel("/assets/bludecorations/models/BluDecorations.obj").setTexture("bludecorations:textures/models/ZeldaTorch.png").setPart("Torch_07").setTranslation(0.5,0,0.5).update());
 		BluDecorationsApi.addPresetModel("Lantern", new RenderElement().setModel("/assets/bludecorations/models/BluDecorations.obj").setTexture("bludecorations:textures/models/ZeldaLantern.png").setPart("Lantern_04").setTranslation(0.5,0,0.5).update());
@@ -97,11 +110,6 @@ public class BluDecorations {
 		BluDecorationsApi.addPresetParticle("Flame (small, very low)", new ParticleElement().setParticleClass("net.minecraft.client.particle.EntityFlameFX").setTranslation(0.5,0.19,0.5).update());
 		BluDecorationsApi.addPresetParticle("Flame (many, very high)", new ParticleElement().setParticleClass("net.minecraft.client.particle.EntityFlameFX").setTranslation(0.5,1.19,0.5).update(), new ParticleElement().setParticleClass("net.minecraft.client.particle.EntityFlameFX").setTranslation(0.5625,1.19,0.5).update(), new ParticleElement().setParticleClass("net.minecraft.client.particle.EntityFlameFX").setTranslation(0.5,1.19,0.5625).update(), new ParticleElement().setParticleClass("net.minecraft.client.particle.EntityFlameFX").setTranslation(0.4375,1.19,0.5).update(), new ParticleElement().setParticleClass("net.minecraft.client.particle.EntityFlameFX").setTranslation(0.5,1.19,0.4375).update());
 		BluDecorationsApi.addPresetParticle("Flame (many, high)", new ParticleElement().setParticleClass("net.minecraft.client.particle.EntityFlameFX").setTranslation(0.5,1,0.5).update(), new ParticleElement().setParticleClass("net.minecraft.client.particle.EntityFlameFX").setTranslation(0.5625,1,0.5).update(), new ParticleElement().setParticleClass("net.minecraft.client.particle.EntityFlameFX").setTranslation(0.5,1,0.5625).update(), new ParticleElement().setParticleClass("net.minecraft.client.particle.EntityFlameFX").setTranslation(0.4375,1,0.5).update(), new ParticleElement().setParticleClass("net.minecraft.client.particle.EntityFlameFX").setTranslation(0.5,1,0.4375).update());
-	}
-
-	@Mod.EventHandler
-	public static void postInit(FMLPostInitializationEvent event)
-	{
 
 	}
 }

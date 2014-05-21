@@ -11,16 +11,21 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import bludecorations.api.BluDecorationsApi;
 import bludecorations.api.RenderElement;
+import bludecorations.common.BluDecorations;
 import bludecorations.common.PacketHandler;
 import bludecorations.common.TileEntityCustomizeableDecoration;
 
 public class GuiModelCustomization extends GuiScreen
 {
 	protected TileEntityCustomizeableDecoration tileEntity;
+	private GuiTextboxAdvanced textField_saveConfig;
+
 	private GuiTextboxAdvanced textField_modelPath;
 	private GuiTextboxAdvanced textField_texturePath;
 	private GuiTextboxAdvanced textField_renderPart;
+	int presetModelListPage;
 	int page;
 
 	int xSize = 0;
@@ -32,6 +37,7 @@ public class GuiModelCustomization extends GuiScreen
 		this.xSize = 256;
 		this.ySize = 256;
 		this.page = 0;
+		this.presetModelListPage = 0;
 	}
 
 	@Override
@@ -63,9 +69,17 @@ public class GuiModelCustomization extends GuiScreen
 			if(textField_renderPart != null)
 				this.textField_renderPart = null;
 
+			this.textField_saveConfig = new GuiTextboxAdvanced(this.fontRenderer, x+93, y+64, 86, 18);
+			this.textField_saveConfig.setTextColor(-1);
+			this.textField_saveConfig.setDisabledTextColour(-1);
+			this.textField_saveConfig.setEnableBackgroundDrawing(true);
+			this.textField_saveConfig.setMaxStringLength(2048);
+
 			this.buttonList.add(startID+0,new GuiSliderAdvanced(startID+0, x+188, y+40, 64, 20, tileEntity.getOrientation()/360.0, 0.0, 360.0, 22.5, "Rotation Y", "#"));
 
-			this.buttonList.add(startID+1,new GuiPresetModelList(startID+1, x+4, y+64, 80, 144, 5, this ));
+			GuiPresetModelList guiPresetModelList = new GuiPresetModelList(startID+1, x+4, y+64, 80, 144, 5, this);
+			guiPresetModelList.page = this.presetModelListPage;
+			this.buttonList.add(startID+1,guiPresetModelList);
 
 			this.buttonList.add(startID+2,new GuiButton(startID+2, x+4, y+ 40, 80, 20, "Prev Page"));
 			this.buttonList.add(startID+3,new GuiButton(startID+3, x+4, y+212, 80, 20, "Next Page"));
@@ -82,6 +96,8 @@ public class GuiModelCustomization extends GuiScreen
 			this.buttonList.add(startID+10,new GuiSliderAdvanced(startID+10, x+106, y+216, 72, 20, aabb[4], 0.0, 1.0, 0.125, "Bounds Z-", "0.000"));
 			this.buttonList.add(startID+11,new GuiSliderAdvanced(startID+11, x+180, y+216, 72, 20, aabb[5], 0.0, 1.0, 0.125, "Bounds Z+", "0.000"));
 
+			this.buttonList.add(startID+12,new GuiButton(startID+12, x+92, y+84, 88, 20, "Save Config"));
+
 			//this.buttonList.add(startID+0,new GuiSliderAdvanced(startID+0, x+28, y+ 78, 110, 20, "", re.getRotation()[0]/360.0, 0.0, 360.0, 22.5, "Rotation X"));
 
 		}
@@ -92,6 +108,8 @@ public class GuiModelCustomization extends GuiScreen
 			{
 				((GuiButton)this.buttonList.get(3)).enabled = true;
 
+				if(textField_saveConfig != null)
+					this.textField_saveConfig = null;
 				this.textField_modelPath = new GuiTextboxAdvanced(this.fontRenderer, x+7, y+104, 176, 11);
 				this.textField_modelPath.setTextColor(-1);
 				this.textField_modelPath.setDisabledTextColour(-1);
@@ -147,36 +165,34 @@ public class GuiModelCustomization extends GuiScreen
 	{
 		int mX = Mouse.getEventX() * this.width / this.mc.displayWidth;
 		int mY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-		if(page > 0)
+		boolean cancelFurtherAction = false;
+		for (int l = 0; l < this.buttonList.size(); ++l)
 		{
-			boolean cancelFurtherAction = false;
-			for (int l = 0; l < this.buttonList.size(); ++l)
-			{
-				GuiButton guibutton = (GuiButton)this.buttonList.get(l);
-				if (guibutton instanceof GuiSliderAdvanced)
-					if(((GuiSliderAdvanced)guibutton).mouseOnButton(this.mc, mX, mY))
-						cancelFurtherAction = ((GuiSliderAdvanced)guibutton).keyEntered(par1, par2);
-			}
+			GuiButton guibutton = (GuiButton)this.buttonList.get(l);
+			if (guibutton instanceof GuiSliderAdvanced)
+				if(((GuiSliderAdvanced)guibutton).mouseOnButton(this.mc, mX, mY))
+					cancelFurtherAction = ((GuiSliderAdvanced)guibutton).keyEntered(par1, par2);
+		}
 
-			if(!cancelFurtherAction)
+		if(!cancelFurtherAction)
+		{
+			if(this.textField_modelPath!=null && this.textField_modelPath.textboxKeyTyped(par1, par2))
 			{
-				if(this.textField_modelPath!=null && this.textField_modelPath.textboxKeyTyped(par1, par2))
-				{
-				}
-				else if(this.textField_texturePath!=null && this.textField_texturePath.textboxKeyTyped(par1, par2))
-				{
-				}
-				else if(this.textField_renderPart!=null && this.textField_renderPart.textboxKeyTyped(par1, par2))
-				{
-				}
-				else
-				{
-					super.keyTyped(par1, par2);
-				}
+			}
+			else if(this.textField_texturePath!=null && this.textField_texturePath.textboxKeyTyped(par1, par2))
+			{
+			}
+			else if(this.textField_renderPart!=null && this.textField_renderPart.textboxKeyTyped(par1, par2))
+			{
+			}
+			else if(this.textField_saveConfig!=null && this.textField_saveConfig.textboxKeyTyped(par1, par2))
+			{
+			}
+			else
+			{
+				super.keyTyped(par1, par2);
 			}
 		}
-		else
-			super.keyTyped(par1, par2);
 		this.updateTile();
 	}
 
@@ -192,9 +208,11 @@ public class GuiModelCustomization extends GuiScreen
 				this.textField_texturePath.mouseClicked(par1, par2, par3);
 			if(textField_renderPart != null)
 				this.textField_renderPart.mouseClicked(par1, par2, par3);
-
-
 		}
+		else
+			if(textField_saveConfig != null)
+				this.textField_saveConfig.mouseClicked(par1, par2, par3);
+
 		this.updateTile();
 	}
 	@Override
@@ -249,6 +267,9 @@ public class GuiModelCustomization extends GuiScreen
 				validModelPart = GraphicUtilities.isModelPartValid(GraphicUtilities.bindModel(textField_modelPath.getText()), textField_renderPart.getText());
 			this.fontRenderer.drawStringWithShadow("Model Part Name:", k+8, l+146, validModelPart ? 14737632 : 9125927);
 		}
+		else
+			if(textField_saveConfig != null)
+				this.textField_saveConfig.drawTextBox();
 	}
 
 	protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
@@ -322,10 +343,19 @@ public class GuiModelCustomization extends GuiScreen
 			if(button.id == 6)
 			{
 				((GuiPresetModelList)this.buttonList.get(5)).changePage(false);
+				this.presetModelListPage = ((GuiPresetModelList)this.buttonList.get(5)).page;
 			}
 			if(button.id == 7)
 			{
 				((GuiPresetModelList)this.buttonList.get(5)).changePage(true);
+				this.presetModelListPage = ((GuiPresetModelList)this.buttonList.get(5)).page;
+			}
+			if(button.id == 16 && this.textField_saveConfig!=null)
+			{
+				String saveName = this.textField_saveConfig.getText();
+				BluDecorations.proxy.savePresetRender(saveName, tileEntity.getRenderElements());
+				BluDecorationsApi.addPresetModel(saveName, tileEntity.getRenderElements());
+				this.initGui();
 			}
 		}
 	}
@@ -370,9 +400,9 @@ public class GuiModelCustomization extends GuiScreen
 				re.setAlpha(alpha);
 				re.update();
 
-					tileEntity.setRenderElements(new RenderElement[]{});
-					for(int i=0; i<elements.length; i++)
-						PacketHandler.sendRenderElementPacket(tileEntity.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, i, elements[i]);
+				tileEntity.setRenderElements(new RenderElement[]{});
+				for(int i=0; i<elements.length; i++)
+					PacketHandler.sendRenderElementPacket(tileEntity.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, i, elements[i]);
 			}
 		}
 		else
@@ -390,8 +420,8 @@ public class GuiModelCustomization extends GuiScreen
 			float zMin = (float) ((GuiSliderAdvanced) this.buttonList.get(startID+10)).getValueScaled();
 			float zMax = (float) ((GuiSliderAdvanced) this.buttonList.get(startID+11)).getValueScaled();
 
-				PacketHandler.sendTileRotationScalePacket(tileEntity.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, rotY, scale);
-				PacketHandler.sendTileAABBLightPacket(tileEntity.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, xMin, xMax, yMin, yMax, zMin, zMax, light);
+			PacketHandler.sendTileRotationScalePacket(tileEntity.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, rotY, scale);
+			PacketHandler.sendTileAABBLightPacket(tileEntity.worldObj, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, xMin, xMax, yMin, yMax, zMin, zMax, light);
 		}
 	}
 

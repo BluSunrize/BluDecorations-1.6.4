@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -181,6 +182,12 @@ public class BlockCustomizeableDecoration extends BlockContainer
 				}
 				return true;
 			}
+			if(player.getCurrentEquippedItem()!= null && player.getCurrentEquippedItem().getItem() instanceof ItemTool && player.getCurrentEquippedItem().getItemDamage() == 3)
+			{
+				tile.infiniteRenderSize = !tile.infiniteRenderSize;
+				if(world.isRemote)
+					player.addChatMessage(StatCollector.translateToLocal("gui.text.renderBounds"+(tile.infiniteRenderSize==false?"1":"0")));
+			}
 			if(tile.hasInv)
 			{
 				player.openGui(BluDecorations.instance, 2, world, x, y, z);
@@ -261,5 +268,6 @@ public class BlockCustomizeableDecoration extends BlockContainer
 				}
 			}
 		}
+		super.breakBlock(world, x, y, z, par5, par6);
 	}
 }
